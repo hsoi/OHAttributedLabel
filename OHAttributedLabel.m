@@ -94,7 +94,7 @@ CGRect CTLineGetTypographicBoundsAsRect(CTLineRef line, CGPoint lineOrigin) {
 	CGFloat ascent = 0;
 	CGFloat descent = 0;
 	CGFloat leading = 0;
-	CGFloat width = CTLineGetTypographicBounds(line, &ascent, &descent, &leading);
+	CGFloat width = (CGFloat)CTLineGetTypographicBounds(line, &ascent, &descent, &leading);
 	CGFloat height = ascent + descent /* + leading */;
 	
 	return CGRectMake(lineOrigin.x,
@@ -107,7 +107,7 @@ CGRect CTRunGetTypographicBoundsAsRect(CTRunRef run, CTLineRef line, CGPoint lin
 	CGFloat ascent = 0;
 	CGFloat descent = 0;
 	CGFloat leading = 0;
-	CGFloat width = CTRunGetTypographicBounds(run, CFRangeMake(0, 0), &ascent, &descent, &leading);
+	CGFloat width = (CGFloat)CTRunGetTypographicBounds(run, CFRangeMake(0, 0), &ascent, &descent, &leading);
 	CGFloat height = ascent + descent /* + leading */;
 	
 	CGFloat xOffset = CTLineGetOffsetForStringIndex(line, CTRunGetStringRange(run).location, NULL);
@@ -172,7 +172,7 @@ BOOL CTRunContainsCharactersFromStringRange(CTRunRef run, NSRange range) {
 {
 	customLinks = [[NSMutableArray alloc] init];
 	self.linkColor = [UIColor blueColor];
-	self.highlightedLinkColor = [UIColor colorWithWhite:0.4 alpha:0.3];
+	self.highlightedLinkColor = [UIColor colorWithWhite:(CGFloat)0.4 alpha:(CGFloat)0.3];
 	self.underlineLinks = YES;
 	self.automaticallyAddLinksForType = NSTextCheckingTypeLink;
 	if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"tel:0"]]) {
@@ -247,6 +247,8 @@ BOOL CTRunContainsCharactersFromStringRange(CTRunRef run, NSRange range) {
 		[linkDetector enumerateMatchesInString:plainText options:0 range:NSMakeRange(0,[plainText length])
 									usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop)
 		 {
+        #pragma unused(flags)
+        #pragma unused(stop)
 			 int32_t uStyle = self.underlineLinks ? kCTUnderlineStyleSingle : kCTUnderlineStyleNone;
 			 UIColor* thisLinkColor = (self.delegate && [self.delegate respondsToSelector:@selector(colorForLink:underlineStyle:)])
 			 ? [self.delegate colorForLink:result underlineStyle:&uStyle] : self.linkColor;
@@ -259,6 +261,8 @@ BOOL CTRunContainsCharactersFromStringRange(CTRunRef run, NSRange range) {
 	}
 	[customLinks enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop)
 	 {
+    #pragma unused(idx)
+    #pragma unused(stop)
 		 NSTextCheckingResult* result = (NSTextCheckingResult*)obj;
 		 
 		 int32_t uStyle = self.underlineLinks ? kCTUnderlineStyleSingle : kCTUnderlineStyleNone;
@@ -293,6 +297,7 @@ BOOL CTRunContainsCharactersFromStringRange(CTRunRef run, NSRange range) {
 		[linkDetector enumerateMatchesInString:plainText options:0 range:NSMakeRange(0,[plainText length])
 									usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop)
 		 {
+        #pragma unused(flags)
 			 NSRange r = [result range];
 			 if (NSLocationInRange(idx, r)) {
 				 foundResult = [[result retain] autorelease];
@@ -304,6 +309,7 @@ BOOL CTRunContainsCharactersFromStringRange(CTRunRef run, NSRange range) {
 	
 	[customLinks enumerateObjectsUsingBlock:^(id obj, NSUInteger aidx, BOOL *stop)
 	 {
+    #pragma unused(aidx)
 		 NSRange r = [(NSTextCheckingResult*)obj range];
 		 if (NSLocationInRange(idx, r)) {
 			 foundResult = [[obj retain] autorelease];
@@ -366,6 +372,8 @@ BOOL CTRunContainsCharactersFromStringRange(CTRunRef run, NSRange range) {
 }
 
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+#pragma unused(event)
+    
 	UITouch* touch = [touches anyObject];
 	CGPoint pt = [touch locationInView:self];
 	
@@ -378,12 +386,14 @@ BOOL CTRunContainsCharactersFromStringRange(CTRunRef run, NSRange range) {
 }
 
 -(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
+#pragma unused(event)
+    
 	UITouch* touch = [touches anyObject];
 	CGPoint pt = [touch locationInView:self];
 	
 	NSTextCheckingResult *linkAtTouchesEnded = [self linkAtPoint:pt];
 	
-	BOOL closeToStart = (abs(touchStartPoint.x - pt.x) < 10 && abs(touchStartPoint.y - pt.y) < 10);
+	BOOL closeToStart = (BOOL)(fabsf(touchStartPoint.x - pt.x) < (CGFloat)10.0 && fabsf(touchStartPoint.y - pt.y) < (CGFloat)10.0);
 
 	// we can check on equality of the ranges themselfes since the data detectors create new results
 	if (activeLink && (NSEqualRanges(activeLink.range,linkAtTouchesEnded.range) || closeToStart)) {
@@ -398,6 +408,9 @@ BOOL CTRunContainsCharactersFromStringRange(CTRunRef run, NSRange range) {
 }
 
 -(void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
+#pragma unused(touches)
+#pragma unused(event)
+    
 	[activeLink release];
 	activeLink = nil;
 	[self setNeedsDisplay];
