@@ -29,11 +29,17 @@
 
 #include <tgmath.h>
 
+// Hsoi 2014-05-19 - While the original author is fine in having this, I'm going to just remove it. I haven't
+// drank the CocoaPods kool-aid, and OHAttributedLabel has been deprecated in favor of DTCoreText. However,
+// I still need some of these NSAttributedString+Attributes methods... at least for now. Until I can
+// factor that out, I'm just going to change this and move on.
+/*
 #if ! defined(COCOAPODS) && ! defined(OHATTRIBUTEDLABEL_DEDICATED_PROJECT)
 // Copying files in your project and thus compiling OHAttributedLabel under different build settings
 // than the one provided is not recommended and increase risks of leaks (mixing ARC vs. MRC) or unwanted behaviors
 #warning [OHAttributedLabel integration] You should include OHAttributedLabel project in your workspace instead of copying the files in your own app project. Or better, use CocoaPods to integrate your 3rd party libs. See README for instructions.
 #endif
+*/
 
 NSString* kOHLinkAttributeName = @"NSLinkAttributeName"; // Use the same value as OSX, to be compatible in case Apple port this to iOS one day too
 
