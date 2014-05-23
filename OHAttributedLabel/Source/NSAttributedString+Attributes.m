@@ -79,7 +79,7 @@ NSString* kOHLinkAttributeName = @"NSLinkAttributeName"; // Use the same value a
     {
         CFRange fitCFRange = CFRangeMake(0,0);
         sz = CTFramesetterSuggestFrameSizeWithConstraints(framesetter,CFRangeMake(0,0),NULL,maxSize,&fitCFRange);
-        sz = CGSizeMake( floor(sz.width+1) , floor(sz.height+1) ); // take 1pt of margin for security
+        sz = CGSizeMake( (CGFloat)floor(sz.width+1.0f) , (CGFloat)floor(sz.height+1.0f) ); // take 1pt of margin for security
         CFRelease(framesetter);
 
         if (fitRange)
@@ -248,6 +248,7 @@ NSString* kOHLinkAttributeName = @"NSLinkAttributeName"; // Use the same value a
         if (!currentFont)
         {
             currentFont = CTFontCreateUIFontForLanguage(kCTFontLabelFontType, 0.0, NULL);
+            CFAutorelease(currentFont);
         }
 		// The range for which this font is effective
 		NSRange fontRange = NSIntersectionRange(range, effectiveRange);
